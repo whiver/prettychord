@@ -10,7 +10,7 @@ namespace PrettyChord {
 
         public Window (Application app) {
             Object (application: app);
-            title = "PrettyChord";
+            title = _("PrettyChord");
             default_width = 800;
             default_height = 600;
 
@@ -22,7 +22,7 @@ namespace PrettyChord {
             var header = new HeaderBar ();
             this.set_titlebar (header);
 
-            var export_btn = new Button.with_label ("Export PDF");
+            var export_btn = new Button.with_label (_("Export PDF"));
             export_btn.clicked.connect (on_export_clicked);
             header.pack_end (export_btn);
 
@@ -67,10 +67,10 @@ namespace PrettyChord {
         }
 
         private void on_export_clicked () {
-            var file_dialog = new FileChooserNative ("Export PDF", this, FileChooserAction.SAVE, "Save", "Cancel");
+            var file_dialog = new FileChooserNative (_("Export PDF"), this, FileChooserAction.SAVE, _("Save"), _("Cancel"));
             var filter = new FileFilter ();
             filter.add_pattern ("*.pdf");
-            filter.set_filter_name ("PDF Files");
+            filter.set_filter_name (_("PDF Files"));
             file_dialog.add_filter (filter);
             
             file_dialog.response.connect ((response) => {

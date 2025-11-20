@@ -11,4 +11,5 @@ add_project_arguments([
 ], language: 'c')
 
 subdir('data')
+subdir('po')
 subdir('src')

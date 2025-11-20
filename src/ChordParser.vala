@@ -30,7 +30,7 @@ namespace PrettyChord {
     public class ChordParser : Object {
         public Song parse (string text) {
             var song = new Song ();
-            song.title = "Untitled";
+            song.title = _("Untitled");
             
             foreach (var line_text in text.split ("\n")) {
                 var line = new Line ();
