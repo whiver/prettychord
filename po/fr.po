@@ -38,3 +38,6 @@ msgstr "Enregistrer un fichier"
 
 msgid "ChordPro Files"
 msgstr "Fichiers ChordPro"
+
+msgid "Key: "
+msgstr "Tonalité : "

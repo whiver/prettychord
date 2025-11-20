@@ -4,9 +4,44 @@ namespace PrettyChord {
     public class ChordRenderer : Object {
         public void draw_song (Context cr, Song song, double width) {
             cr.set_source_rgb (0, 0, 0);
-            cr.select_font_face ("Monospace", FontSlant.NORMAL, FontWeight.NORMAL);
             
             double y = 40;
+            
+            // Draw Header
+            if (song.title != _("Untitled") || song.artist != "" || song.key != "") {
+                // Title
+                cr.select_font_face ("Sans", FontSlant.NORMAL, FontWeight.BOLD);
+                cr.set_font_size (24);
+                TextExtents extents;
+                cr.text_extents (song.title, out extents);
+                cr.move_to ((width - extents.width) / 2, y);
+                cr.show_text (song.title);
+                y += extents.height + 10;
+
+                // Artist
+                if (song.artist != "") {
+                    cr.select_font_face ("Sans", FontSlant.NORMAL, FontWeight.NORMAL);
+                    cr.set_font_size (18);
+                    cr.text_extents (song.artist, out extents);
+                    cr.move_to ((width - extents.width) / 2, y);
+                    cr.show_text (song.artist);
+                    y += extents.height + 10;
+                }
+
+                // Key
+                if (song.key != "") {
+                    cr.select_font_face ("Sans", FontSlant.NORMAL, FontWeight.NORMAL);
+                    cr.set_font_size (14);
+                    cr.move_to (10, y);
+                    cr.show_text (_("Key: ") + song.key);
+                    y += 20;
+                }
+                
+                y += 20; // Spacing after header
+            }
+
+            cr.select_font_face ("Monospace", FontSlant.NORMAL, FontWeight.NORMAL);
+            
             double line_height = 20;
             
             foreach (var line in song.lines) {
