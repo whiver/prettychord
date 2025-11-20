@@ -15,6 +15,9 @@ msgstr "Exporter en PDF"
 msgid "Save"
 msgstr "Enregistrer"
 
+msgid "Save As"
+msgstr "Enregistrer sous"
+
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -23,3 +26,15 @@ msgstr "Fichiers PDF"
 
 msgid "Untitled"
 msgstr "Sans titre"
+
+msgid "Open"
+msgstr "Ouvrir"
+
+msgid "Open File"
+msgstr "Ouvrir un fichier"
+
+msgid "Save File"
+msgstr "Enregistrer un fichier"
+
+msgid "ChordPro Files"
+msgstr "Fichiers ChordPro"

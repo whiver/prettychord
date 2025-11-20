@@ -8,6 +8,7 @@ namespace PrettyChord {
         private ChordParser parser;
         private ChordRenderer renderer;
         private Song current_song;
+        private string? current_filename = null;
 
         public Window (Application app) {
             Object (application: app);
@@ -22,6 +23,18 @@ namespace PrettyChord {
             // Header Bar
             var header = new HeaderBar ();
             this.set_titlebar (header);
+
+            var open_btn = new Button.with_label (_("Open"));
+            open_btn.clicked.connect (on_open_clicked);
+            header.pack_start (open_btn);
+
+            var save_btn = new Button.with_label (_("Save"));
+            save_btn.clicked.connect (on_save_clicked);
+            header.pack_start (save_btn);
+
+            var save_as_btn = new Button.with_label (_("Save As"));
+            save_as_btn.clicked.connect (on_save_as_clicked);
+            header.pack_start (save_as_btn);
 
             var export_btn = new Button.with_label (_("Export PDF"));
             export_btn.clicked.connect (on_export_clicked);
@@ -56,6 +69,83 @@ namespace PrettyChord {
             
             // Initial parse
             on_text_changed ();
+        }
+
+        private void on_open_clicked () {
+            var file_dialog = new FileChooserNative (_("Open File"), this, FileChooserAction.OPEN, _("Open"), _("Cancel"));
+            var filter = new FileFilter ();
+            filter.add_pattern ("*.cho");
+            filter.add_pattern ("*.crd");
+            filter.add_pattern ("*.pro");
+            filter.add_pattern ("*.chordpro");
+            filter.add_pattern ("*.txt");
+            filter.set_filter_name (_("ChordPro Files"));
+            file_dialog.add_filter (filter);
+            
+            file_dialog.response.connect ((response) => {
+                if (response == ResponseType.ACCEPT) {
+                    var file = file_dialog.get_file ();
+                    load_file (file);
+                }
+                file_dialog.destroy ();
+            });
+            file_dialog.show ();
+        }
+
+        private void load_file (GLib.File file) {
+            try {
+                uint8[] contents;
+                string etag;
+                file.load_contents (null, out contents, out etag);
+                text_view.buffer.text = (string) contents;
+                current_filename = file.get_path ();
+                update_title ();
+            } catch (Error e) {
+                warning ("Error loading file: %s", e.message);
+            }
+        }
+
+        private void on_save_clicked () {
+            if (current_filename != null) {
+                save_to_file (GLib.File.new_for_path (current_filename));
+            } else {
+                on_save_as_clicked ();
+            }
+        }
+
+        private void on_save_as_clicked () {
+            var file_dialog = new FileChooserNative (_("Save File"), this, FileChooserAction.SAVE, _("Save"), _("Cancel"));
+            var filter = new FileFilter ();
+            filter.add_pattern ("*.cho");
+            filter.set_filter_name (_("ChordPro Files"));
+            file_dialog.add_filter (filter);
+            
+            file_dialog.response.connect ((response) => {
+                if (response == ResponseType.ACCEPT) {
+                    var file = file_dialog.get_file ();
+                    save_to_file (file);
+                }
+                file_dialog.destroy ();
+            });
+            file_dialog.show ();
+        }
+
+        private void save_to_file (GLib.File file) {
+            try {
+                file.replace_contents (text_view.buffer.text.data, null, false, FileCreateFlags.NONE, null);
+                current_filename = file.get_path ();
+                update_title ();
+            } catch (Error e) {
+                warning ("Error saving file: %s", e.message);
+            }
+        }
+
+        private void update_title () {
+            if (current_filename != null) {
+                title = "%s - %s".printf (Path.get_basename (current_filename), _("PrettyChord"));
+            } else {
+                title = _("PrettyChord");
+            }
         }
 
         private void setup_syntax_highlighting () {
