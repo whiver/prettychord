@@ -1,8 +1,9 @@
 using Gtk;
+using GtkSource;
 
 namespace PrettyChord {
     public class Window : ApplicationWindow {
-        private TextView text_view;
+        private View text_view;
         private DrawingArea drawing_area;
         private ChordParser parser;
         private ChordRenderer renderer;
@@ -30,8 +31,13 @@ namespace PrettyChord {
             paned.position = 400;
             
             // Editor
-            text_view = new TextView ();
+            text_view = new View ();
             text_view.wrap_mode = WrapMode.WORD;
+            text_view.show_line_numbers = true;
+            text_view.monospace = true;
+            
+            setup_syntax_highlighting ();
+            
             text_view.buffer.changed.connect (on_text_changed);
             
             var scroll1 = new ScrolledWindow ();
@@ -50,6 +56,23 @@ namespace PrettyChord {
             
             // Initial parse
             on_text_changed ();
+        }
+
+        private void setup_syntax_highlighting () {
+            var lm = LanguageManager.get_default ();
+            
+            // Add current directory/data to search path for development
+            string[] search_path = lm.get_search_path ();
+            search_path += Path.build_filename (Environment.get_current_dir (), "data");
+            lm.set_search_path (search_path);
+
+            var lang = lm.get_language ("chordpro");
+            if (lang != null) {
+                var buffer = text_view.buffer as Buffer;
+                if (buffer != null) {
+                    buffer.set_language (lang);
+                }
+            }
         }
 
         private void on_text_changed () {

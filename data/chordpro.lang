@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language id="chordpro" name="ChordPro" version="2.0" _section="Source">
+  <metadata>
+    <property name="mimetypes">text/x-chordpro</property>
+    <property name="globs">*.cho;*.crd;*.pro;*.chordpro</property>
+  </metadata>
+
+  <styles>
+    <style id="chord" name="Chord" map-to="def:keyword"/>
+    <style id="directive" name="Directive" map-to="def:preprocessor"/>
+    <style id="comment" name="Comment" map-to="def:comment"/>
+  </styles>
+
+  <definitions>
+    <context id="chordpro">
+      <include>
+        
+        <!-- Comments: # Comment -->
+        <context id="comment" style-ref="comment" end-at-line-end="true" class="comment">
+          <start>#</start>
+        </context>
+
+        <!-- Chords: [Am] -->
+        <context id="chord" style-ref="chord">
+          <match>\[[^\]]+\]</match>
+        </context>
+
+        <!-- Directives: {title: Song} -->
+        <context id="directive" style-ref="directive">
+          <match>\{[^\}]+\}</match>
+        </context>
+
+      </include>
+    </context>
+  </definitions>
+</language>

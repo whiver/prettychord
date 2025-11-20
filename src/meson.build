@@ -2,6 +2,7 @@ deps = [
   dependency('gtk4'),
   dependency('gee-0.8'),
   dependency('cairo'),
+  dependency('gtksourceview-5'),
 ]
 
 sources = files(
