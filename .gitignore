@@ -1,0 +1,27 @@
+# Build directory
+build/
+_build/
+
+# Meson
+meson-logs/
+meson-private/
+meson-info/
+
+# Generated C files from Vala (optional, but recommended for pure Vala projects)
+src/*.c
+src/*.h
+
+# Object files
+*.o
+*.obj
+
+# Editor/IDE
+.vscode/
+.idea/
+*.swp
+*~
+*.bak
+
+# OS generated files
+.DS_Store
+Thumbs.db
