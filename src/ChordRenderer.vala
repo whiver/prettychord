@@ -62,8 +62,8 @@ namespace PrettyChord {
                         x += 20;
                         cr.save ();
                         cr.set_line_width (2);
-                        cr.move_to (15, y);
-                        cr.line_to (15, y + line_height + 20);
+                        cr.move_to (15, y - 25);
+                        cr.line_to (15, y + 15);
                         cr.stroke ();
                         cr.restore ();
                     }
@@ -100,6 +100,17 @@ namespace PrettyChord {
                         }
                     }
                     y += (line_height + 20);
+                    
+                    // Add extra spacing after chorus if next item is not chorus
+                    if (line.is_chorus) {
+                        int index = song.items.index_of(item);
+                        if (index + 1 < song.items.size) {
+                            var next_item = song.items[index + 1];
+                            if (next_item is LyricLine && !((LyricLine)next_item).is_chorus) {
+                                y += 10;
+                            }
+                        }
+                    }
                 } else if (item is TabBlock) {
                     var tab = (TabBlock) item;
                     cr.select_font_face ("Monospace", FontSlant.NORMAL, FontWeight.NORMAL);
