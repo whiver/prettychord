@@ -41,3 +41,6 @@ msgstr "Fichiers ChordPro"
 
 msgid "Key: "
 msgstr "Tonalité : "
+
+msgid "Menu"
+msgstr "Menu"

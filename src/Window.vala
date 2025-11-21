@@ -24,19 +24,32 @@ namespace PrettyChord {
             var header = new HeaderBar ();
             this.set_titlebar (header);
 
-            var open_btn = new Button.with_label (_("Open"));
+            var open_btn = new Button.from_icon_name ("document-open-symbolic");
+            open_btn.tooltip_text = _("Open");
             open_btn.clicked.connect (on_open_clicked);
             header.pack_start (open_btn);
 
-            var save_btn = new Button.with_label (_("Save"));
+            var save_btn = new Button.from_icon_name ("document-save-symbolic");
+            save_btn.tooltip_text = _("Save");
             save_btn.clicked.connect (on_save_clicked);
             header.pack_start (save_btn);
 
-            var save_as_btn = new Button.with_label (_("Save As"));
-            save_as_btn.clicked.connect (on_save_as_clicked);
-            header.pack_start (save_as_btn);
+            // Menu
+            var action_save_as = new SimpleAction ("save-as", null);
+            action_save_as.activate.connect (() => { on_save_as_clicked (); });
+            this.add_action (action_save_as);
 
-            var export_btn = new Button.with_label (_("Export PDF"));
+            var menu = new GLib.Menu ();
+            menu.append (_("Save As"), "win.save-as");
+
+            var menu_btn = new MenuButton ();
+            menu_btn.icon_name = "open-menu-symbolic";
+            menu_btn.menu_model = menu;
+            menu_btn.tooltip_text = _("Menu");
+            header.pack_end (menu_btn);
+
+            var export_btn = new Button.from_icon_name ("document-send-symbolic");
+            export_btn.tooltip_text = _("Export PDF");
             export_btn.clicked.connect (on_export_clicked);
             header.pack_end (export_btn);
 
