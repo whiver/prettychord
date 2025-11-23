@@ -1,0 +1,38 @@
+name: prettychord
+base: core22
+version: '0.1.0'
+summary: A chord sheet editor and viewer
+description: |
+  PrettyChord is a GTK4 application to write chords using ChordPro syntax
+  and generate beautiful PDF files.
+
+grade: stable
+confinement: strict
+
+parts:
+  prettychord:
+    plugin: meson
+    source: .
+    meson-parameters:
+      - --prefix=/usr
+    build-packages:
+      - libgtk-4-dev
+      - libgee-0.8-dev
+      - libcairo2-dev
+      - libgtksourceview-5-dev
+      - valac
+      - pkg-config
+    stage-packages:
+      - libgtk-4-1
+      - libgee-0.8-2
+      - libcairo2
+      - libgtksourceview-5-0
+
+apps:
+  prettychord:
+    command: usr/bin/prettychord
+    extensions: [gnome]
+    common-id: com.example.prettychord
+    plugs:
+      - home
+      - removable-media
