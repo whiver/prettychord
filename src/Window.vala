@@ -219,7 +219,7 @@ namespace PrettyChord {
             cr.set_source_rgb (1, 1, 1);
             cr.paint ();
             
-            renderer.draw_song (cr, current_song, 595);
+            renderer.draw_song (cr, current_song, 595, 842);
             surface.finish ();
         }
     }

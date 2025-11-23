@@ -2,10 +2,12 @@ using Cairo;
 
 namespace PrettyChord {
     public class ChordRenderer : Object {
-        public void draw_song (Context cr, Song song, double width) {
+        public void draw_song (Context cr, Song song, double width, double page_height = 0) {
             cr.set_source_rgb (0, 0, 0);
             
-            double y = 40;
+            double margin_top = 40;
+            double margin_bottom = 40;
+            double y = margin_top;
             
             // Draw Header
             if (song.title != _("Untitled") || song.artist != "" || song.key != "") {
@@ -53,6 +55,32 @@ namespace PrettyChord {
             double line_height = 20;
             
             foreach (var item in song.items) {
+                // Calculate item height
+                double item_height = 0;
+                if (item is LyricLine) {
+                    item_height = line_height + 20;
+                    // Add extra spacing after chorus if next item is not chorus
+                    if (((LyricLine)item).is_chorus) {
+                        int index = song.items.index_of(item);
+                        if (index + 1 < song.items.size) {
+                            var next_item = song.items[index + 1];
+                            if (next_item is LyricLine && !((LyricLine)next_item).is_chorus) {
+                                item_height += 10;
+                            }
+                        }
+                    }
+                } else if (item is TabBlock) {
+                    item_height = ((TabBlock)item).lines.size * 15 + 10;
+                } else if (item is Comment) {
+                    item_height = 25;
+                }
+
+                // Check pagination
+                if (page_height > 0 && y + item_height > page_height - margin_bottom) {
+                    cr.show_page ();
+                    y = margin_top;
+                }
+
                 if (item is LyricLine) {
                     var line = (LyricLine) item;
                     double x = 10;
@@ -62,6 +90,7 @@ namespace PrettyChord {
                         x += 20;
                         cr.save ();
                         cr.set_line_width (2);
+                        cr.set_source_rgb (0, 0, 0); // Ensure black for line
                         cr.move_to (15, y - 25);
                         cr.line_to (15, y + 15);
                         cr.stroke ();
@@ -147,6 +176,11 @@ namespace PrettyChord {
             
             // Copyright footer
             if (song.copyright != "") {
+                // Check if footer fits
+                if (page_height > 0 && y + 20 > page_height - margin_bottom) {
+                    cr.show_page();
+                    y = margin_top;
+                }
                 y += 20;
                 cr.select_font_face ("Sans", FontSlant.NORMAL, FontWeight.NORMAL);
                 cr.set_font_size (10);
