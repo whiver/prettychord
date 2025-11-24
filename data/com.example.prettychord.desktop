@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=PrettyChord
+Comment=A chord sheet editor and viewer
+Exec=prettychord
+Icon=com.example.prettychord
+Terminal=false
+Type=Application
+Categories=GTK;Utility;
+StartupNotify=true
+Keywords=chord;guitar;music;tab;
