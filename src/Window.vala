@@ -45,8 +45,13 @@ namespace PrettyChord {
             action_save_as.activate.connect (() => { on_save_as_clicked (); });
             this.add_action (action_save_as);
 
+            var action_about = new SimpleAction ("about", null);
+            action_about.activate.connect (on_about_clicked);
+            this.add_action (action_about);
+
             var menu = new GLib.Menu ();
             menu.append (_("Save As"), "win.save-as");
+            menu.append (_("About"), "win.about");
 
             var menu_btn = new MenuButton ();
             menu_btn.icon_name = "open-menu-symbolic";
@@ -235,6 +240,19 @@ namespace PrettyChord {
             
             renderer.draw_song (cr, current_song, 595, 842);
             surface.finish ();
+        }
+
+        private void on_about_clicked () {
+            string[] authors = { "William Hiver" };
+            show_about_dialog (this,
+                program_name: _("PrettyChord"),
+                version: "0.1.0",
+                comments: _("A chord sheet editor and viewer"),
+                website: "https://github.com/whiver/prettychord",
+                authors: authors,
+                logo_icon_name: "com.example.prettychord",
+                license_type: License.MIT_X11
+            );
         }
     }
 }
