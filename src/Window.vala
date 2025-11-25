@@ -24,8 +24,11 @@ namespace PrettyChord {
             var header = new HeaderBar ();
             this.set_titlebar (header);
 
-            var open_btn = new Button.from_icon_name ("document-open-symbolic");
-            open_btn.tooltip_text = _("Open");
+            var open_btn = new Button ();
+            var open_box = new Box (Orientation.HORIZONTAL, 6);
+            open_box.append (new Image.from_icon_name ("document-open-symbolic"));
+            open_box.append (new Label (_("Open")));
+            open_btn.child = open_box;
             open_btn.clicked.connect (on_open_clicked);
             header.pack_start (open_btn);
 
