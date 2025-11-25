@@ -2,6 +2,7 @@ name: prettychord
 title: Pretty Chord
 base: core22
 version: '0.1.0'
+icon: data/icons/hicolor/scalable/apps/com.example.prettychord.svg
 summary: A chord sheet editor and viewer
 description: |
   PrettyChord is a GTK4 application to write chords using ChordPro syntax
@@ -34,7 +35,6 @@ apps:
     command: usr/bin/prettychord
     extensions: [gnome]
     common-id: com.example.prettychord
-    icon: data/icons/hicolor/scalable/apps/com.example.prettychord.svg
     plugs:
       - home
       - removable-media
