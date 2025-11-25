@@ -9,6 +9,8 @@ namespace PrettyChord {
         private ChordRenderer renderer;
         private Song current_song;
         private string? current_filename = null;
+        private Button save_btn;
+        private bool loading = false;
 
         public Window (Application app) {
             Object (application: app);
@@ -32,8 +34,9 @@ namespace PrettyChord {
             open_btn.clicked.connect (on_open_clicked);
             header.pack_start (open_btn);
 
-            var save_btn = new Button.from_icon_name ("document-save-symbolic");
+            save_btn = new Button.from_icon_name ("document-save-symbolic");
             save_btn.tooltip_text = _("Save");
+            save_btn.sensitive = false;
             save_btn.clicked.connect (on_save_clicked);
             header.pack_start (save_btn);
 
@@ -110,13 +113,17 @@ namespace PrettyChord {
 
         private void load_file (GLib.File file) {
             try {
+                loading = true;
                 uint8[] contents;
                 string etag;
                 file.load_contents (null, out contents, out etag);
                 text_view.buffer.text = (string) contents;
                 current_filename = file.get_path ();
                 update_title ();
+                save_btn.sensitive = false;
+                loading = false;
             } catch (Error e) {
+                loading = false;
                 warning ("Error loading file: %s", e.message);
             }
         }
@@ -151,6 +158,7 @@ namespace PrettyChord {
                 file.replace_contents (text_view.buffer.text.data, null, false, FileCreateFlags.NONE, null);
                 current_filename = file.get_path ();
                 update_title ();
+                save_btn.sensitive = false;
             } catch (Error e) {
                 warning ("Error saving file: %s", e.message);
             }
@@ -182,6 +190,9 @@ namespace PrettyChord {
         }
 
         private void on_text_changed () {
+            if (!loading) {
+                save_btn.sensitive = true;
+            }
             string text = text_view.buffer.text;
             current_song = parser.parse (text);
             drawing_area.queue_draw ();
