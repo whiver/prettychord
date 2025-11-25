@@ -100,7 +100,8 @@ namespace PrettyChord {
                     cr.select_font_face ("Monospace", FontSlant.NORMAL, FontWeight.NORMAL);
                     double next_min_x = 0;
                     
-                    foreach (var token in line.tokens) {
+                    for (int i = 0; i < line.tokens.size; i++) {
+                        var token = line.tokens[i];
                         if (token.is_chord) {
                             cr.set_font_size (12);
                             cr.set_source_rgb (0, 0, 1); // Blue chords
@@ -112,6 +113,11 @@ namespace PrettyChord {
                             
                             if (x + extents.width > next_min_x) {
                                 next_min_x = x + extents.width + 5;
+                            }
+
+                            // If next token is also a chord, advance x
+                            if (i + 1 < line.tokens.size && line.tokens[i+1].is_chord) {
+                                x += extents.width + 10;
                             }
                         } else {
                             cr.set_font_size (14);
@@ -154,23 +160,24 @@ namespace PrettyChord {
                     y += 10;
                 } else if (item is Comment) {
                     var comment = (Comment) item;
-                    cr.set_font_size (12);
+                    cr.set_font_size (14);
                     cr.set_source_rgb (0.3, 0.3, 0.3); // Grey
                     
                     var slant = (comment.comment_type == CommentType.ITALIC) ? FontSlant.ITALIC : FontSlant.NORMAL;
-                    cr.select_font_face ("Sans", slant, FontWeight.NORMAL);
+                    var weight = (comment.comment_type == CommentType.BOX) ? FontWeight.BOLD : FontWeight.NORMAL;
+                    cr.select_font_face ("Sans", slant, weight);
                     
                     TextExtents extents;
                     cr.text_extents (comment.text, out extents);
                     
                     if (comment.comment_type == CommentType.BOX) {
-                        cr.rectangle (8, y - extents.height - 4, extents.width + 4, extents.height + 8);
+                        cr.rectangle (8, y - extents.height - 6, extents.width + 10, extents.height + 12);
                         cr.stroke ();
                     }
                     
-                    cr.move_to (10, y);
+                    cr.move_to (13, y);
                     cr.show_text (comment.text);
-                    y += 25;
+                    y += 40;
                 }
             }
             
