@@ -1,0 +1,77 @@
+name: Build and Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  snap:
+    name: Build Snap
+    runs-on: ubuntu-latest
+    environment: Snapcraft
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Snap
+      uses: snapcore/action-build@v1
+      id: build
+      
+    - name: Publish Snap
+      uses: snapcore/action-publish@v1
+      env:
+        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+      with:
+        snap: ${{ steps.build.outputs.snap }}
+        release: stable
+
+  deb:
+    name: Build Debian Package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y valac libgtk-4-dev libgee-0.8-dev libcairo2-dev libgtksourceview-5-dev meson ninja-build
+
+    - name: Build and Install
+      run: |
+        meson setup build --prefix=/usr
+        meson compile -C build
+        mkdir -p dist/DEBIAN
+        DESTDIR=$(pwd)/dist meson install -C build
+
+    - name: Create Control File
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        INSTALLED_SIZE=$(du -s dist/usr | cut -f1)
+        
+        cat <<EOF > dist/DEBIAN/control
+        Package: prettychord
+        Version: $VERSION
+        Section: utils
+        Priority: optional
+        Architecture: amd64
+        Depends: libgtk-4-1, libgee-0.8-2, libcairo2, libgtksourceview-5-0
+        Maintainer: William Hiver <whiver@users.noreply.github.com>
+        Installed-Size: $INSTALLED_SIZE
+        Description: A chord sheet editor and viewer
+         PrettyChord is a GTK4 application to write chords using ChordPro syntax
+         and generate beautiful PDF files.
+        EOF
+
+    - name: Build .deb
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/v}
+        dpkg-deb --build dist prettychord_${VERSION}_amd64.deb
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: prettychord_*.deb
+
