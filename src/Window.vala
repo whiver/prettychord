@@ -250,7 +250,7 @@ namespace PrettyChord {
                 comments: _("A chord sheet editor and viewer"),
                 website: "https://github.com/whiver/prettychord",
                 authors: authors,
-                logo_icon_name: "com.example.prettychord",
+                logo_icon_name: "io.github.whiver.prettychord",
                 license_type: License.MIT_X11
             );
         }

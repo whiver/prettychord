@@ -2,7 +2,7 @@
 Name=PrettyChord
 Comment=A chord sheet editor and viewer
 Exec=prettychord
-Icon=com.example.prettychord
+Icon=io.github.whiver.prettychord
 Terminal=false
 Type=Application
 Categories=GTK;Utility;

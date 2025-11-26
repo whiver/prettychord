@@ -2,7 +2,7 @@ name: prettychord
 title: Pretty Chord
 base: core22
 adopt-info: prettychord
-icon: data/icons/hicolor/scalable/apps/com.example.prettychord.svg
+icon: data/icons/hicolor/scalable/apps/io.github.whiver.prettychord.svg
 summary: A chord sheet editor and viewer
 description: |
   PrettyChord is a GTK4 application to write chords using ChordPro syntax
@@ -10,6 +10,12 @@ description: |
 
 grade: stable
 confinement: strict
+
+slots:
+  dbus-prettychord:
+    interface: dbus
+    bus: session
+    name: io.github.whiver.prettychord
 
 parts:
   prettychord:
@@ -37,8 +43,10 @@ apps:
   prettychord:
     command: usr/bin/prettychord
     extensions: [gnome]
-    common-id: com.example.prettychord
-    desktop: usr/share/applications/com.example.prettychord.desktop
+    common-id: io.github.whiver.prettychord
+    desktop: usr/share/applications/io.github.whiver.prettychord.desktop
+    slots:
+      - dbus-prettychord
     plugs:
       - home
       - removable-media

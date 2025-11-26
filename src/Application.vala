@@ -2,7 +2,7 @@ namespace PrettyChord {
     public class Application : Gtk.Application {
         public Application () {
             Object (
-                application_id: "com.example.prettychord",
+                application_id: "io.github.whiver.prettychord",
                 flags: ApplicationFlags.FLAGS_NONE
             );
         }
