@@ -38,6 +38,7 @@ apps:
     command: usr/bin/prettychord
     extensions: [gnome]
     common-id: com.example.prettychord
+    desktop: usr/share/applications/com.example.prettychord.desktop
     plugs:
       - home
       - removable-media
