@@ -2,12 +2,91 @@ using Cairo;
 
 namespace PrettyChord {
     public class ChordRenderer : Object {
-        public void draw_song (Context cr, Song song, double width, double page_height = 0) {
+        public int count_pages (Context cr, Song song, double width, double page_height) {
+            double margin_top = 40;
+            double margin_bottom = 40;
+            double y = margin_top;
+            int pages = 1;
+            
+            // Header calculation
+            if (song.title != _("Untitled") || song.artist != "" || song.key != "") {
+                cr.select_font_face ("Sans", FontSlant.NORMAL, FontWeight.BOLD);
+                cr.set_font_size (24);
+                TextExtents extents;
+                cr.text_extents (song.title, out extents);
+                y += extents.height + 5;
+
+                if (song.subtitle != "") {
+                    cr.select_font_face ("Sans", FontSlant.NORMAL, FontWeight.NORMAL);
+                    cr.set_font_size (16);
+                    cr.text_extents (song.subtitle, out extents);
+                    y += extents.height + 10;
+                }
+
+                if (song.artist != "") {
+                    cr.select_font_face ("Sans", FontSlant.NORMAL, FontWeight.NORMAL);
+                    cr.set_font_size (18);
+                    cr.text_extents (song.artist, out extents);
+                    y += extents.height + 10;
+                }
+
+                if (song.key != "") {
+                    y += 20;
+                }
+                
+                y += 20;
+            }
+
+            double line_height = 20;
+            
+            foreach (var item in song.items) {
+                double item_height = 0;
+                if (item is LyricLine) {
+                    item_height = line_height + 20;
+                    if (((LyricLine)item).is_chorus) {
+                        int index = song.items.index_of(item);
+                        if (index + 1 < song.items.size) {
+                            var next_item = song.items[index + 1];
+                            if (next_item is LyricLine && !((LyricLine)next_item).is_chorus) {
+                                item_height += 10;
+                            }
+                        }
+                    }
+                } else if (item is TabBlock) {
+                    item_height = ((TabBlock)item).lines.size * 15 + 10;
+                } else if (item is Comment) {
+                    item_height = 40;
+                }
+
+                if (page_height > 0 && y + item_height > page_height - margin_bottom) {
+                    pages++;
+                    y = margin_top;
+                }
+                y += item_height;
+            }
+            
+            if (song.copyright != "") {
+                if (page_height > 0 && y + 20 > page_height - margin_bottom) {
+                    pages++;
+                }
+            }
+            
+            return pages;
+        }
+
+        public void draw_song (Context cr, Song song, double width, double page_height = 0, bool is_preview = false) {
             cr.set_source_rgb (0, 0, 0);
             
             double margin_top = 40;
             double margin_bottom = 40;
             double y = margin_top;
+            
+            if (is_preview) {
+                cr.set_source_rgb(1, 1, 1);
+                cr.rectangle(0, 0, width, page_height);
+                cr.fill();
+                cr.set_source_rgb(0, 0, 0);
+            }
             
             // Draw Header
             if (song.title != _("Untitled") || song.artist != "" || song.key != "") {
@@ -77,8 +156,18 @@ namespace PrettyChord {
 
                 // Check pagination
                 if (page_height > 0 && y + item_height > page_height - margin_bottom) {
-                    cr.show_page ();
-                    y = margin_top;
+                    if (is_preview) {
+                        cr.translate(0, page_height + 20);
+                        y = margin_top;
+                        
+                        cr.set_source_rgb(1, 1, 1);
+                        cr.rectangle(0, 0, width, page_height);
+                        cr.fill();
+                        cr.set_source_rgb(0, 0, 0);
+                    } else {
+                        cr.show_page ();
+                        y = margin_top;
+                    }
                 }
 
                 if (item is LyricLine) {
@@ -185,8 +274,18 @@ namespace PrettyChord {
             if (song.copyright != "") {
                 // Check if footer fits
                 if (page_height > 0 && y + 20 > page_height - margin_bottom) {
-                    cr.show_page();
-                    y = margin_top;
+                    if (is_preview) {
+                        cr.translate(0, page_height + 20);
+                        y = margin_top;
+                        
+                        cr.set_source_rgb(1, 1, 1);
+                        cr.rectangle(0, 0, width, page_height);
+                        cr.fill();
+                        cr.set_source_rgb(0, 0, 0);
+                    } else {
+                        cr.show_page();
+                        y = margin_top;
+                    }
                 }
                 y += 20;
                 cr.select_font_face ("Sans", FontSlant.NORMAL, FontWeight.NORMAL);

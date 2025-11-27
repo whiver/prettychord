@@ -12,6 +12,10 @@ namespace PrettyChord {
         private Button save_btn;
         private bool loading = false;
 
+        private const double A4_WIDTH = 595;
+        private const double A4_HEIGHT = 842;
+        private const double PREVIEW_GAP = 20;
+
         public Window (Application app) {
             Object (application: app);
             title = _("PrettyChord");
@@ -84,6 +88,7 @@ namespace PrettyChord {
             // Preview
             drawing_area = new DrawingArea ();
             drawing_area.set_draw_func (draw_preview);
+            drawing_area.notify["width"].connect (update_preview_size);
             
             var scroll2 = new ScrolledWindow ();
             scroll2.child = drawing_area;
@@ -200,15 +205,40 @@ namespace PrettyChord {
             }
             string text = text_view.buffer.text;
             current_song = parser.parse (text);
+            update_preview_size ();
             drawing_area.queue_draw ();
+        }
+
+        private void update_preview_size () {
+            int width = drawing_area.get_width ();
+            if (width <= 0) return;
+
+            double scale = (double) (width - 40) / A4_WIDTH;
+            if (scale <= 0) scale = 1;
+
+            // Create a dummy context to count pages
+            var surface = new Cairo.ImageSurface (Cairo.Format.ARGB32, 1, 1);
+            var cr = new Cairo.Context (surface);
+            
+            int pages = renderer.count_pages (cr, current_song, A4_WIDTH, A4_HEIGHT);
+            double total_height = pages * A4_HEIGHT + (pages + 1) * PREVIEW_GAP;
+            
+            drawing_area.set_content_height ((int) (total_height * scale));
+            drawing_area.set_content_width (width);
         }
 
         private void draw_preview (DrawingArea area, Cairo.Context cr, int width, int height) {
             // Fill background
-            cr.set_source_rgb (1, 1, 1);
+            cr.set_source_rgb (0.9, 0.9, 0.9);
             cr.paint ();
             
-            renderer.draw_song (cr, current_song, width);
+            double scale = (double) (width - 40) / A4_WIDTH;
+            if (scale <= 0) scale = 1;
+            
+            cr.translate (20, 20);
+            cr.scale (scale, scale);
+            
+            renderer.draw_song (cr, current_song, A4_WIDTH, A4_HEIGHT, true);
         }
 
         private void on_export_clicked () {
