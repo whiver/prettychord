@@ -44,3 +44,9 @@ msgstr "Tonalité : "
 
 msgid "Menu"
 msgstr "Menu"
+
+msgid "About"
+msgstr "À propos"
+
+msgid "A chord sheet editor and viewer"
+msgstr "Un éditeur et visualiseur de partitions"
