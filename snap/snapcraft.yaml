@@ -26,6 +26,7 @@ parts:
       craftctl set version=$(git describe --tags --abbrev=0 | sed 's/^v//')
     meson-parameters:
       - --prefix=/usr
+      - -Dapp_version=$(git describe --tags --abbrev=0 | sed 's/^v//')
     build-packages:
       - libgtk-4-dev
       - libgee-0.8-dev

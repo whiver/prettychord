@@ -1,0 +1,5 @@
+namespace PrettyChord {
+    public class Constants {
+        public const string VERSION = "@VERSION@";
+    }
+}

@@ -43,7 +43,8 @@ jobs:
 
     - name: Build and Install
       run: |
-        meson setup build --prefix=/usr
+        VERSION=${GITHUB_REF#refs/tags/v}
+        meson setup build --prefix=/usr -Dapp_version=$VERSION
         meson compile -C build
         mkdir -p dist/DEBIAN
         DESTDIR=$(pwd)/dist meson install -C build

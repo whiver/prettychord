@@ -276,7 +276,7 @@ namespace PrettyChord {
             string[] authors = { "William Hiver" };
             show_about_dialog (this,
                 program_name: _("PrettyChord"),
-                version: "0.1.0",
+                version: Constants.VERSION,
                 comments: _("A chord sheet editor and viewer"),
                 website: "https://github.com/whiver/prettychord",
                 authors: authors,

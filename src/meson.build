@@ -13,6 +13,8 @@ sources = files(
   'ChordRenderer.vala',
 )
 
+sources += meson.project_build_root() / 'Config.vala'
+
 executable('prettychord', sources,
   dependencies: deps,
   install: true,
